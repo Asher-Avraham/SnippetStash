@@ -10,7 +10,7 @@ import { useSnippets } from './hooks/useSnippets'
 import { useFavorites } from './hooks/useFavorites'
 import { useTags } from './hooks/useTags'
 import { useNotification } from './hooks/useNotification'
-import type { Snippet, Tag } from './lib/supabase'
+import type { Snippet, Tag } from './hooks/useSnippets'
 
 const PROGRAMMING_LANGUAGES = [
   'javascript', 'typescript', 'python', 'java', 'c', 'cpp', 'csharp',
@@ -116,9 +116,9 @@ function App() {
     }
   }
 
-  const handleToggleFavorite = async (snippetId: string) => {
+  const handleToggleFavorite = async (snippetId: string, isFavorited: boolean) => {
     try {
-      await toggleFavorite(snippetId)
+      await toggleFavorite(snippetId, isFavorited)
       const snippet = snippets.find(s => s.id === snippetId)
       if (snippet?.is_favorited) {
         success('Removed from favorites!')

@@ -2,14 +2,14 @@ import React from 'react'
 import { Calendar, Code, Globe, Lock, Copy, Edit3, Trash2, Star, Tag as TagIcon } from 'lucide-react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import type { Snippet } from '../lib/supabase'
+import type { Snippet } from '../hooks/useSnippets'
 
 interface SnippetCardProps {
   snippet: Snippet
   onEdit: (snippet: Snippet) => void
   onDelete: (id: string) => void
   onCopy: (content: string) => void
-  onToggleFavorite: (id: string) => void
+  onToggleFavorite: (id: string, isFavorited: boolean) => void
 }
 
 export function SnippetCard({ snippet, onEdit, onDelete, onCopy, onToggleFavorite }: SnippetCardProps) {
@@ -81,7 +81,7 @@ export function SnippetCard({ snippet, onEdit, onDelete, onCopy, onToggleFavorit
           
           <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <button
-              onClick={() => onToggleFavorite(snippet.id)}
+              onClick={() => onToggleFavorite(snippet.id, snippet.is_favorited)}
               className={`p-2 rounded-lg transition-colors duration-200 ${
                 snippet.is_favorited
                   ? 'text-yellow-400 hover:text-yellow-300 bg-yellow-400/10'

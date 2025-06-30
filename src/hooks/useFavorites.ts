@@ -1,91 +1,55 @@
-import { useState, useEffect } from 'react'
-import { supabase, type Favorite } from '../lib/supabase'
+const API_URL = '/api';
 
 // For now, we'll use a static user ID since we don't have authentication
 // Using a valid UUID format to match the database schema
-const CURRENT_USER_ID = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
+const CURRENT_USER_ID = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
+
+export interface Favorite {
+  id: string;
+  snippet_id: string;
+  user_id: string;
+  created_at: string;
+}
 
 export function useFavorites() {
-  const [favorites, setFavorites] = useState<Favorite[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  const fetchFavorites = async () => {
-    try {
-      setLoading(true)
-      const { data, error } = await supabase
-        .from('favorites')
-        .select('*')
-        .eq('user_id', CURRENT_USER_ID)
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      setFavorites(data || [])
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
-      console.error('Error fetching favorites:', err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const addToFavorites = async (snippetId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('favorites')
-        .insert([{ snippet_id: snippetId, user_id: CURRENT_USER_ID }])
-        .select()
-        .single()
-
-      if (error) throw error
-      setFavorites(prev => [data, ...prev])
-      return data
+      const response = await fetch(`${API_URL}/favorites`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ snippet_id: snippetId, user_id: CURRENT_USER_ID }),
+      });
+      if (!response.ok) throw new Error('Failed to add to favorites');
+      return await response.json();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add to favorites')
-      throw err
+      console.error(err);
+      throw err;
     }
-  }
+  };
 
   const removeFromFavorites = async (snippetId: string) => {
     try {
-      const { error } = await supabase
-        .from('favorites')
-        .delete()
-        .eq('snippet_id', snippetId)
-        .eq('user_id', CURRENT_USER_ID)
-
-      if (error) throw error
-      setFavorites(prev => prev.filter(f => f.snippet_id !== snippetId))
+      const response = await fetch(`${API_URL}/favorites/${snippetId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to remove from favorites');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to remove from favorites')
-      throw err
+      console.error(err);
+      throw err;
     }
-  }
+  };
 
-  const isFavorited = (snippetId: string) => {
-    return favorites.some(f => f.snippet_id === snippetId)
-  }
-
-  const toggleFavorite = async (snippetId: string) => {
-    if (isFavorited(snippetId)) {
-      await removeFromFavorites(snippetId)
+  const toggleFavorite = async (snippetId: string, isFavorited: boolean) => {
+    if (isFavorited) {
+      await removeFromFavorites(snippetId);
     } else {
-      await addToFavorites(snippetId)
+      await addToFavorites(snippetId);
     }
-  }
-
-  useEffect(() => {
-    fetchFavorites()
-  }, [])
+  };
 
   return {
-    favorites,
-    loading,
-    error,
     addToFavorites,
     removeFromFavorites,
-    isFavorited,
     toggleFavorite,
-    refetch: fetchFavorites
-  }
+  };
 }

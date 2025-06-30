@@ -1,197 +1,110 @@
-import { useState, useEffect } from 'react'
-import { supabase, type Snippet } from '../lib/supabase'
+import { useState, useEffect } from 'react';
 
-// For now, we'll use a static user ID since we don't have authentication
-// Using a valid UUID format to match the database schema
-const CURRENT_USER_ID = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
+// Define the types based on the new API response
+export interface Tag {
+  id: string;
+  name: string;
+  color: string;
+}
+
+export interface Snippet {
+  id: string;
+  title: string;
+  content: string;
+  language: string;
+  is_public: boolean;
+  slug: string;
+  created_at: string;
+  updated_at: string;
+  is_favorited: boolean;
+  tags: Tag[];
+}
+
+const API_URL = '/api';
 
 export function useSnippets() {
-  const [snippets, setSnippets] = useState<Snippet[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [snippets, setSnippets] = useState<Snippet[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchSnippets = async () => {
     try {
-      setLoading(true)
-      const { data, error } = await supabase
-        .from('snippets')
-        .select(`
-          *,
-          favorites!left(id),
-          snippet_tags!left(
-            tag_id,
-            tags(*)
-          )
-        `)
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      
-      // Process snippets with favorites and tags
-      const processedSnippets = (data || []).map(snippet => ({
-        ...snippet,
-        is_favorited: snippet.favorites && snippet.favorites.length > 0,
-        tags: snippet.snippet_tags?.map((st: any) => st.tags).filter(Boolean) || []
-      }))
-      
-      setSnippets(processedSnippets)
+      setLoading(true);
+      const response = await fetch(`${API_URL}/snippets`);
+      if (!response.ok) throw new Error('Failed to fetch snippets');
+      const data = await response.json();
+      setSnippets(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
-      console.error('Error fetching snippets:', err)
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const fetchFavoriteSnippets = async () => {
     try {
-      setLoading(true)
-      const { data, error } = await supabase
-        .from('favorites')
-        .select(`
-          *,
-          snippets (
-            *,
-            snippet_tags!left(
-              tag_id,
-              tags(*)
-            )
-          )
-        `)
-        .eq('user_id', CURRENT_USER_ID)
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      
-      // Extract snippets from favorites and mark them as favorited
-      const favoriteSnippets = (data || [])
-        .filter(fav => fav.snippets)
-        .map(fav => ({
-          ...fav.snippets,
-          is_favorited: true,
-          tags: fav.snippets.snippet_tags?.map((st: any) => st.tags).filter(Boolean) || []
-        }))
-      
-      setSnippets(favoriteSnippets)
+      setLoading(true);
+      const response = await fetch(`${API_URL}/favorites`);
+      if (!response.ok) throw new Error('Failed to fetch favorite snippets');
+      const data = await response.json();
+      setSnippets(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
-      console.error('Error fetching favorite snippets:', err)
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const createSnippet = async (snippetData: Partial<Snippet>) => {
     try {
-      const slug = generateSlug(snippetData.title || '')
-      const { tags, ...snippetWithoutTags } = snippetData
-      
-      const { data, error } = await supabase
-        .from('snippets')
-        .insert([{ ...snippetWithoutTags, slug }])
-        .select()
-        .single()
-
-      if (error) throw error
-
-      // Add tags if provided
-      if (tags && tags.length > 0) {
-        const tagInserts = tags.map(tag => ({
-          snippet_id: data.id,
-          tag_id: tag.id
-        }))
-
-        const { error: tagError } = await supabase
-          .from('snippet_tags')
-          .insert(tagInserts)
-
-        if (tagError) throw tagError
-      }
-
-      const newSnippet = { ...data, tags: tags || [] }
-      setSnippets(prev => [newSnippet, ...prev])
-      return newSnippet
+      const response = await fetch(`${API_URL}/snippets`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(snippetData),
+      });
+      if (!response.ok) throw new Error('Failed to create snippet');
+      const newSnippet = await response.json();
+      fetchSnippets(); // Refetch to get the latest list
+      return newSnippet;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create snippet')
-      throw err
+      setError(err instanceof Error ? err.message : 'Failed to create snippet');
+      throw err;
     }
-  }
+  };
 
   const updateSnippet = async (id: string, snippetData: Partial<Snippet>) => {
     try {
-      const { tags, ...snippetWithoutTags } = snippetData
-      
-      const { data, error } = await supabase
-        .from('snippets')
-        .update({ ...snippetWithoutTags, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .select()
-        .single()
-
-      if (error) throw error
-
-      // Update tags if provided
-      if (tags !== undefined) {
-        // Remove existing tags
-        await supabase
-          .from('snippet_tags')
-          .delete()
-          .eq('snippet_id', id)
-
-        // Add new tags
-        if (tags.length > 0) {
-          const tagInserts = tags.map(tag => ({
-            snippet_id: id,
-            tag_id: tag.id
-          }))
-
-          const { error: tagError } = await supabase
-            .from('snippet_tags')
-            .insert(tagInserts)
-
-          if (tagError) throw tagError
-        }
-      }
-
-      const updatedSnippet = { 
-        ...data, 
-        tags: tags || snippets.find(s => s.id === id)?.tags || [],
-        is_favorited: snippets.find(s => s.id === id)?.is_favorited || false
-      }
-      
-      setSnippets(prev => prev.map(s => s.id === id ? updatedSnippet : s))
-      return updatedSnippet
+      const response = await fetch(`${API_URL}/snippets/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(snippetData),
+      });
+      if (!response.ok) throw new Error('Failed to update snippet');
+      const updatedSnippet = await response.json();
+      fetchSnippets(); // Refetch to get the latest list
+      return updatedSnippet;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update snippet')
-      throw err
+      setError(err instanceof Error ? err.message : 'Failed to update snippet');
+      throw err;
     }
-  }
+  };
 
   const deleteSnippet = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('snippets')
-        .delete()
-        .eq('id', id)
-
-      if (error) throw error
-      setSnippets(prev => prev.filter(s => s.id !== id))
+      const response = await fetch(`${API_URL}/snippets/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete snippet');
+      setSnippets(prev => prev.filter(s => s.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete snippet')
-      throw err
+      setError(err instanceof Error ? err.message : 'Failed to delete snippet');
+      throw err;
     }
-  }
-
-  const generateSlug = (title: string): string => {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '') + '-' + Math.random().toString(36).substr(2, 6)
-  }
+  };
 
   useEffect(() => {
-    fetchSnippets()
-  }, [])
+    fetchSnippets();
+  }, []);
 
   return {
     snippets,
@@ -201,6 +114,6 @@ export function useSnippets() {
     updateSnippet,
     deleteSnippet,
     refetch: fetchSnippets,
-    fetchFavorites: fetchFavoriteSnippets
-  }
+    fetchFavorites: fetchFavoriteSnippets,
+  };
 }
