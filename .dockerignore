@@ -1,0 +1,22 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+.vite
+
+# Git
+.git
+
+# Docker
+.dockerignore
+Dockerfile
+
+# Local environment
+.env
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
