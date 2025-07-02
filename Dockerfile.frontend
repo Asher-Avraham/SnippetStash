@@ -7,5 +7,3 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
-
-# No final stage here, just the build output

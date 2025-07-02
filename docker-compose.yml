@@ -1,20 +1,18 @@
-version: '3.8'
-
 services:
   frontend:
     build:
       context: .
       dockerfile: Dockerfile.frontend
     volumes:
-      - ./dist:/app/dist # This will create the dist folder on the host, which Nginx will then mount
+      - frontend_build_output:/app/dist # Mount the named volume directly to the build output directory
 
   nginx:
     image: nginx:latest
     ports:
       - "80:80"
     volumes:
-      - frontend:/usr/share/nginx/html # Mount the frontend's build output
-      - ./nginx.conf:/etc/nginx/nginx.conf # Mount the custom nginx.conf
+      - frontend_build_output:/usr/share/nginx/html # Mount the same named volume here
+      - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - backend
       - frontend
@@ -46,4 +44,4 @@ services:
 
 volumes:
   postgres_data:
-  frontend: # Define the named volume for the frontend build output
+  frontend_build_output: # Define the named volume for the frontend build output
