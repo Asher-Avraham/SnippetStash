@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { X, Plus, Tag as TagIcon } from 'lucide-react'
-import type { Tag } from '../lib/supabase'
+import type { Tag } from '../hooks/useSnippets'
 
 interface TagInputProps {
   selectedTags: Tag[]

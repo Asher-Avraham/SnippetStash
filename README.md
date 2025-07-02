@@ -1,6 +1,6 @@
 # SnippetShare
 
-A beautiful, full-stack code snippet sharing application built with React, TypeScript, and Supabase. Save, organize, and share your code snippets with syntax highlighting and powerful search capabilities.
+A beautiful, full-stack code snippet sharing application built with React and TypeScript. Save, organize, and share your code snippets with syntax highlighting and powerful search capabilities.
 
 ![SnippetShare](https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=1200&h=400&fit=crop)
 
@@ -11,14 +11,13 @@ A beautiful, full-stack code snippet sharing application built with React, TypeS
 - **🌐 Public/Private Sharing** - Control snippet visibility
 - **🎨 Syntax Highlighting** - Support for 20+ programming languages
 - **📱 Responsive Design** - Beautiful UI that works on all devices
-- **⚡ Real-time Updates** - Powered by Supabase for instant synchronization
-- **🔒 Secure** - Row-level security with Supabase
+
 - **📋 One-Click Copy** - Copy code snippets to clipboard instantly
 
 ## 🚀 Tech Stack
 
 - **Frontend**: React 18, TypeScript, Tailwind CSS
-- **Backend**: Supabase (PostgreSQL, Auth, Real-time)
+- **Backend**: PostgreSQL
 - **Syntax Highlighting**: React Syntax Highlighter with Prism
 - **Icons**: Lucide React
 - **Build Tool**: Vite
@@ -29,7 +28,7 @@ A beautiful, full-stack code snippet sharing application built with React, TypeS
 ### Prerequisites
 
 - Node.js 18+ and npm
-- A Supabase account and project
+
 
 ### 1. Clone the Repository
 
@@ -46,17 +45,11 @@ npm install
 cp .env.example .env
 ```
 
-2. Update `.env` with your Supabase credentials:
-```env
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
+
 
 ### 3. Database Setup
 
-1. Go to your Supabase project dashboard
-2. Navigate to the SQL Editor
-3. Run the migration script from `supabase/migrations/20250629121510_floating_hill.sql`
+
 
 This will create:
 - The `snippets` table with all required columns
@@ -174,7 +167,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- [Supabase](https://supabase.com) for the amazing backend-as-a-service
+
 - [Tailwind CSS](https://tailwindcss.com) for the utility-first CSS framework
 - [Lucide](https://lucide.dev) for the beautiful icons
 - [Prism](https://prismjs.com) for syntax highlighting

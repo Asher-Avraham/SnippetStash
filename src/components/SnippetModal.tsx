@@ -4,7 +4,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { TagInput } from './TagInput'
 import { useTags } from '../hooks/useTags'
-import type { Snippet, Tag } from '../lib/supabase'
+import type { Snippet, Tag } from '../hooks/useSnippets'
 
 interface SnippetModalProps {
   isOpen: boolean
