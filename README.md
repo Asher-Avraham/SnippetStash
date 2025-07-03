@@ -180,6 +180,27 @@ If you have any questions or run into issues:
 2. Create a new issue with detailed information
 3. Include error messages and steps to reproduce
 
+# 🧪 Backend Unit Tests
+
+Unit tests for the backend API are located in `backend/tests/` and use Jest and Supertest.
+
+## Running Backend Tests
+
+1. Install test dependencies:
+
+```bash
+cd backend/tests
+npm install
+```
+
+2. Run the tests:
+
+```bash
+npx jest
+```
+
+All tests should pass. You can add more tests in the `backend/tests/` directory.
+
 ---
 
 Made with ❤️ and lots of ☕
