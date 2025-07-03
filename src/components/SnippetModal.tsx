@@ -95,6 +95,7 @@ export function SnippetModal({ isOpen, onClose, onSave, snippet, languages }: Sn
             <button
               onClick={onClose}
               className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors duration-200"
+              title="Close"
             >
               <X className="h-5 w-5" />
             </button>
