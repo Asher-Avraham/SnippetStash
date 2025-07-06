@@ -123,6 +123,7 @@ export function SnippetModal({ isOpen, onClose, onSave, snippet, languages }: Sn
                 Language
               </label>
               <select
+                data-cy="language-select"
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
                 className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
