@@ -11,31 +11,30 @@ A beautiful, full-stack code snippet sharing application built with React and Ty
 - **🌐 Public/Private Sharing** - Control snippet visibility
 - **🎨 Syntax Highlighting** - Support for 20+ programming languages
 - **📱 Responsive Design** - Beautiful UI that works on all devices
-
 - **📋 One-Click Copy** - Copy code snippets to clipboard instantly
 
 ## 🚀 Tech Stack
 
 - **Frontend**: React 18, TypeScript, Tailwind CSS
-- **Backend**: PostgreSQL
+- **Backend**: Node.js, Express.js, PostgreSQL
+- **Testing**: Jest, Cypress
 - **Syntax Highlighting**: React Syntax Highlighter with Prism
 - **Icons**: Lucide React
 - **Build Tool**: Vite
-- **Deployment**: Netlify (or any static hosting)
+- **Deployment**: Docker
 
 ## 🛠️ Setup & Installation
 
 ### Prerequisites
 
 - Node.js 18+ and npm
-
+- Docker and Docker Compose
 
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/your-username/snippet-share.git
 cd snippet-share
-npm install
 ```
 
 ### 2. Environment Setup
@@ -44,25 +43,58 @@ npm install
 ```bash
 cp .env.example .env
 ```
+2.  Update the `.env` file with your PostgreSQL credentials.
 
-
-
-### 3. Database Setup
-
-
-
-This will create:
-- The `snippets` table with all required columns
-- Row Level Security policies
-- Performance indexes
-
-### 4. Start Development Server
+### 3. Install Dependencies
 
 ```bash
-npm run dev
+npm install
+cd backend && npm install && cd ..
 ```
 
-Visit `http://localhost:5173` to see your app running!
+### 4. Database Setup
+
+The application uses a PostgreSQL database. The `init.sql` file in the `backend` directory contains the necessary SQL to create the `snippets` table.
+
+### 5. Start the Application
+
+The application can be started using Docker Compose:
+
+```bash
+docker-compose up -d
+```
+
+The frontend will be available at `http://localhost` and the backend at `http://localhost:3000`.
+
+## 🧪 Testing
+
+### Frontend Unit Tests
+
+Frontend unit tests use Jest and React Testing Library.
+
+```bash
+npm test
+```
+
+### Backend Unit Tests
+
+Backend unit tests use Jest and Supertest.
+
+```bash
+cd backend
+npm test
+```
+
+### End-to-End (E2E) Tests
+
+E2E tests use Cypress.
+
+1.  Make sure the application is running (`docker-compose up -d`).
+2.  Open the Cypress test runner:
+
+```bash
+npm run cypress:open
+```
 
 ## 📊 Database Schema
 
@@ -81,77 +113,14 @@ CREATE TABLE snippets (
 );
 ```
 
-## 🎯 Usage
-
-### Creating Snippets
-
-1. Click the "New Snippet" button in the header
-2. Fill in the title, select a programming language
-3. Paste or type your code
-4. Toggle public/private visibility
-5. Save your snippet
-
-### Searching & Filtering
-
-- Use the search bar to find snippets by title or content
-- Filter by programming language using the dropdown
-- Results update in real-time as you type
-
-### Managing Snippets
-
-- **Edit**: Click the edit icon on any snippet card
-- **Delete**: Click the trash icon (with confirmation)
-- **Copy**: Click the copy icon to copy code to clipboard
-- **Preview**: Toggle between edit and preview modes in the modal
-
 ## 🔧 Available Scripts
 
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
-
-## 🌐 Supported Languages
-
-The app supports syntax highlighting for:
-
-- JavaScript/TypeScript
-- Python
-- Java
-- C/C++/C#
-- Go, Rust, PHP, Ruby
-- Swift, Kotlin, Scala
-- HTML, CSS, SQL
-- Bash, PowerShell
-- JSON, YAML, XML
-
-## 🔒 Security Features
-
-- **Row Level Security (RLS)** enabled on all tables
-- **Public/Private snippets** with proper access control
-- **Environment variables** for sensitive configuration
-- **Input validation** and sanitization
-
-## 🚀 Deployment
-
-### Netlify (Recommended)
-
-1. Build the project:
-```bash
-npm run build
-```
-
-2. Deploy the `dist` folder to Netlify
-3. Set environment variables in Netlify dashboard
-4. Enable automatic deployments from your Git repository
-
-### Other Platforms
-
-The app generates static files and can be deployed to:
-- Vercel
-- GitHub Pages
-- AWS S3 + CloudFront
-- Any static hosting service
+- `npm test` - Run frontend unit tests
+- `npm run cypress:open` - Open Cypress test runner
 
 ## 🤝 Contributing
 
@@ -163,44 +132,4 @@ The app generates static files and can be deployed to:
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-
-- [Tailwind CSS](https://tailwindcss.com) for the utility-first CSS framework
-- [Lucide](https://lucide.dev) for the beautiful icons
-- [Prism](https://prismjs.com) for syntax highlighting
-
-## 📞 Support
-
-If you have any questions or run into issues:
-
-1. Check the [Issues](../../issues) page
-2. Create a new issue with detailed information
-3. Include error messages and steps to reproduce
-
-# 🧪 Backend Unit Tests
-
-Unit tests for the backend API are located in `backend/tests/` and use Jest and Supertest.
-
-## Running Backend Tests
-
-1. Install test dependencies:
-
-```bash
-cd backend/tests
-npm install
-```
-
-2. Run the tests:
-
-```bash
-npx jest
-```
-
-All tests should pass. You can add more tests in the `backend/tests/` directory.
-
----
-
-Made with ❤️ and lots of ☕
+This project is licensed under the MIT License.
