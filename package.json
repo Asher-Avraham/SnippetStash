@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "jest",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "clean": "rm -rf dist test-results"
   },
   "dependencies": {
     "lucide-react": "^0.344.0",
