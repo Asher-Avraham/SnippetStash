@@ -38,7 +38,7 @@ jobs:
           sleep 10 # Wait for the services to start
           docker ps
           curl http://localhost:80/ # Optional: check service health
-          npx cypress run --spec cypress/integration/serviceb_that_calls_servicea.js --config baseUrl=http://localhost:8082
+          npx cypress run --spec cypress/integration/serviceb_that_calls_servicea.js --config baseUrl=http://localhost:80
           docker compose down
 
     
