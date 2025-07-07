@@ -28,5 +28,15 @@ jobs:
 
     - name: Run backend tests
       working-directory: ./backend
-      run: npm test
+      run: |
+          npm test
+          cd ..
+    
+    - name: Docker compose up
+      run: docker compose up -d
+
+    - name: Docker compose down
+      run : Docker compose down
+
+    
     
