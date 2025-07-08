@@ -9,28 +9,31 @@ on:
 jobs:
   build_application:
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 5
     steps:
     - name: Check out code 
       uses: actions/checkout@v4
 
-    # - name: Install dependencies
-    #   run: | 
-    #       npm ci
-    #       cd backend
-    #       npm install
-    #       cd tests
-    #       npm ci
-    #       cd ../..
+    - name: Install dependencies
+      run: | 
+          npm ci
+          cd backend
+          npm install
+          cd tests
+          npm ci
+          cd ../..
 
-    # - name: Run frontend tests - unit and integration
-    #   run: npm test
+    - name: Verify Cypress installation
+      run: ls -la node_modules/cypress
 
-    # - name: Run backend tests
-    #   working-directory: ./backend
-    #   run: |
-    #       npm test
-    #       cd ..
+    - name: Run frontend tests - unit and integration
+      run: npm test
+
+    - name: Run backend tests
+      working-directory: ./backend
+      run: |
+          npm test
+          cd ..
     
     - name: Run end-to-end tests
       run: |
