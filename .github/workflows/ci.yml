@@ -35,6 +35,14 @@ jobs:
           npm test
           cd ..
     
+    - name: Create version number
+      id: vars
+      run: echo "sha_short=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_OUTPUT
+
+    - name: Build and tag Docker images
+      run: |
+        docker build -t frontend:${{ steps.vars.outputs.sha_short }} -f Dockerfile.frontend .
+        docker build -t backend:${{ steps.vars.outputs.sha_short }} -f backend/Dockerfile ./backend
     - name: Run end-to-end tests
       run: |
           docker compose up -d
@@ -43,6 +51,8 @@ jobs:
           curl http://localhost:80 # Optional: check service health
           npx cypress run --spec cypress/e2e/create_snippet.cy.ts --config baseUrl=http://localhost:80
           docker compose down
+
+
 
     
     
