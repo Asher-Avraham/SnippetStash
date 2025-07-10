@@ -2,9 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main, ci ]
-  pull_request:
-    branches: [ main, ci ]
+    branches: [main]
 
 jobs:
   build_application:
@@ -66,3 +64,15 @@ jobs:
             docker push ${{ secrets.DOCKER_USERNAME }}/snippetshare-frontend:${{ steps.vars.outputs.sha_short }}
             docker push ${{ secrets.DOCKER_USERNAME }}/snippetshare-backend:${{ steps.vars.outputs.sha_short }}
             echo "completed! pushed images to Docker Hub"  
+
+
+  cleanup:
+    if: always() # runs even if other jobs fail
+    runs-on: ubuntu-latest
+    steps:
+        - name: Delete workflow artifacts
+          uses: geekyeggo/delete-artifact@v5
+          with:
+              name: |
+                  build-artifacts
+                  docker-image
