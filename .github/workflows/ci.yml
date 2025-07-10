@@ -63,6 +63,6 @@ jobs:
         
     - name: Push images to Docker Hub
       run: |
-            docker push ${{ secrets.DOCKER_USERNAME }}/project-frontend:${{ steps.vars.outputs.sha_short }}
-            docker push ${{ secrets.DOCKER_USERNAME }}/project-backend:${{ steps.vars.outputs.sha_short }}
+            docker push ${{ secrets.DOCKER_USERNAME }}/snippetshare:${{ steps.vars.outputs.sha_short }}
+            docker push ${{ secrets.DOCKER_USERNAME }}/snippetshare:${{ steps.vars.outputs.sha_short }}
             echo "completed! pushed images to Docker Hub"  
