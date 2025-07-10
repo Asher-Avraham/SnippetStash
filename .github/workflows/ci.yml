@@ -48,8 +48,8 @@ jobs:
 
     - name: Build and tag Docker images
       run: |
-        docker build -t frontend/${{ secrets.DOCKER_USERNAME }}/snippetshare:${{ steps.vars.outputs.sha_short }} -f Dockerfile.frontend .
-        docker build -t backend/${{ secrets.DOCKER_USERNAME }}/snippetshare:${{ steps.vars.outputs.sha_short }} -f backend/Dockerfile ./backend
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/snippetshare-frontend:${{ steps.vars.outputs.sha_short }} -f Dockerfile.frontend .
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/snippetshare-backend:${{ steps.vars.outputs.sha_short }} -f backend/Dockerfile ./backend
 
 
     - name: Run end-to-end tests
@@ -63,6 +63,6 @@ jobs:
         
     - name: Push images to Docker Hub
       run: |
-            docker push ${{ secrets.DOCKER_USERNAME }}/snippetshare:${{ steps.vars.outputs.sha_short }}
-            docker push ${{ secrets.DOCKER_USERNAME }}/snippetshare:${{ steps.vars.outputs.sha_short }}
+            docker push ${{ secrets.DOCKER_USERNAME }}/snippetshare-frontend:${{ steps.vars.outputs.sha_short }}
+            docker push ${{ secrets.DOCKER_USERNAME }}/snippetshare-backend:${{ steps.vars.outputs.sha_short }}
             echo "completed! pushed images to Docker Hub"  
